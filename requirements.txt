@@ -4,3 +4,5 @@ scikit-learn
 xgboost
 pandas
 numpy
+shap
+matplotlib
