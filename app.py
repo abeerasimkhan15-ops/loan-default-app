@@ -4,6 +4,8 @@ import joblib
 import json
 import numpy as np
 import pandas as pd
+import shap
+import matplotlib.pyplot as plt
 
 model = joblib.load('loan_model.pkl')
 with open('feature_names.json') as f:
@@ -48,3 +50,15 @@ if st.button("Predict"):
         st.error(f"⚠️ High Default Risk: {prob*100:.1f}%")
     else:
         st.success(f"✅ Low Default Risk: {prob*100:.1f}%")
+    
+    st.subheader("🔍 Explanation (SHAP)")
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_data)
+    fig, ax = plt.subplots(figsize=(10, 4))
+    shap.waterfall_plot(shap.Explanation(
+        values=shap_values[0],
+        base_values=explainer.expected_value,
+        data=input_data.iloc[0],
+        feature_names=features
+    ), show=False)
+    st.pyplot(fig)
